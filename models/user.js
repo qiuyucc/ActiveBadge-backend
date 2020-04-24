@@ -39,11 +39,11 @@ const UserSchema = new Schema({
   ]
 });
 //avoid token and password show in the body 
-UserSchema.methods.toJSON = function () {
-  const user = this;
-  const userObject = user.toObject();
-  return _.pick(userObject, ["_id", "email", "username"])
-}
+// UserSchema.methods.toJSON = function () {
+//   const user = this;
+//   const userObject = user.toObject();
+//   return _.pick(userObject, ["_id", "email", "username"])
+// }
 //generatte token
 UserSchema.methods.generateAuthToken = function () {
   const user = this;
