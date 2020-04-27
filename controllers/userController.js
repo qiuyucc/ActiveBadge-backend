@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const {User} = require('../models/user');
 
+const avatarPath="images/default.jpg";
 
 router.get("/user",(req,res,next)=>{
     var token = req.header("x-auth");
@@ -26,7 +27,12 @@ router.post("/create",(req,res)=>{
   const userData={
     username:req.body.username,
     email:req.body.email,
-    password:req.body.password
+    password:req.body.password,
+    image:avatarPath,
+    age:0,
+    point:0,
+    suburb: null,
+    state:null
   }
   const user = new User(userData);
   user.save().then((user)=>{
@@ -75,7 +81,6 @@ router.get("/logout",(req,res,next)=>{
     res.status(401).send();
   });
 });
-
 
 
 module.exports  = router;

@@ -19,5 +19,16 @@ AvatarSchema.statics.findAvatarById= function(id){
     });
 }
 
+AvatarSchema.statics.findAll= function(){
+    const Avatar = this;
+    return Avatar.find({}, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+            console.log(result);
+        }
+      });
+};
+
 const Avatar = mongoose.model('Avatar', AvatarSchema);
 module.exports ={Avatar};

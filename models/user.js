@@ -25,6 +25,24 @@ const UserSchema = new Schema({
     required: true,
     minlength: 8
   },
+  image:{
+    type:String,
+    required:true
+  },
+  point:{
+    type:Number
+  },
+  age:{
+    type:Number
+  },
+  suburb:{
+    type:String,
+    trim:true
+  },
+  state:{
+    type:String,
+    trim:true
+  },
   tokens: [
     {
       access: {
