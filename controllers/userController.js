@@ -61,6 +61,18 @@ router.post("/login",(req,res)=>{
 
 });
 
+router.post("/avatar",(req,res)=>{
+   var image = req.body.image;
+   var token = req.header("x-auth");
+   User.updateAvatar(image,token).then((user)=>{ 
+     user.generateAuthToken().then((token)=>{
+    res.header({"x-auth":token}).send(user);
+});
+}).catch((error)=>{
+        res.status(401).send();
+    });
+});
+
 router.get("/logout",(req,res,next)=>{
   var token = req.header("x-auth");
   User.findUserByToken(token).then((user)=>{

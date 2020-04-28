@@ -130,6 +130,24 @@ UserSchema.statics.findUserByToken=function(token){
     // "tokens.access":"auth"
   });
 }
+
+UserSchema.statics.updateAvatar = function(image,token){
+  const User = this;
+  let decoded;
+  console.log(image);
+  try{
+    decoded= jwt.verify(token,"SDHDSNVUW88270SDYH");
+  }catch(e){
+    return Promise.reject('Unable to find');
+  }
+  return User.findOneAndUpdate({"_id":decoded._id},{"image":image},function(err,result){
+    if(err){
+      console.log(err)
+    }else{
+      console.log(result)
+    }
+  })
+}
 const User = mongoose.model('User', UserSchema);
 
 module.exports = { User };
