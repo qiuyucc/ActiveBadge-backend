@@ -31,6 +31,7 @@ router.post("/create",(req,res)=>{
     image:avatarPath,
     age:0,
     point:0,
+    gender:null,
     suburb: null,
     state:null
   }
@@ -72,6 +73,24 @@ router.post("/avatar",(req,res)=>{
         res.status(401).send();
     });
 });
+
+
+router.post("/profile",(req,res)=>{
+  var age = req.body.age;
+  var gender = req.body.gender;
+  var state = req.body.state;
+  var suburb = req.body.suburb;
+  var token = req.header("x-auth");
+  User.updateProfile(age,gender,state,suburb,token).then((user)=>{ 
+    user.generateAuthToken().then((token)=>{
+   res.header({"x-auth":token}).send(user);
+});
+}).catch((error)=>{
+       res.status(401).send();
+   });
+});
+
+
 
 router.get("/logout",(req,res,next)=>{
   var token = req.header("x-auth");
