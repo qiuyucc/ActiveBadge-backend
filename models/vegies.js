@@ -26,5 +26,17 @@ VegieSchema.statics.findVegieById= function(id){
     });
 }
 
+VegieSchema.statics.findAll= function(){
+    const Vegie = this;
+    return Vegie.find({}, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+            console.log(result);
+        }
+      });
+};
+
+
 const Vegie = mongoose.model('Vegie', VegieSchema);
-module.exports ={Activity};
+module.exports ={Vegie};

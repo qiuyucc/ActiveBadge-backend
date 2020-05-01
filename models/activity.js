@@ -26,5 +26,17 @@ ActivitySchema.statics.findActivityById= function(id){
     });
 }
 
+ActivitySchema.statics.findAll= function(){
+    const Activity = this;
+    return Activity.find({}, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+            console.log(result);
+        }
+      });
+};
+
+
 const Activity = mongoose.model('Activity', ActivitySchema);
 module.exports ={Activity};
