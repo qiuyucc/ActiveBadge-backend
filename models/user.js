@@ -151,6 +151,23 @@ UserSchema.statics.updateAvatar = function(image,token){
     }
   })
 }
+UserSchema.statics.updatePoint = function(point,token){
+  const User = this;
+  let decoded;
+  console.log(point);
+  try{
+    decoded= jwt.verify(token,"SDHDSNVUW88270SDYH");
+  }catch(e){
+    return Promise.reject('Unable to find');
+  }
+  return User.findOneAndUpdate({"_id":decoded._id},{"point":point},function(err,result){
+    if(err){
+      console.log(err)
+    }else{
+      console.log(result)
+    }
+  })
+}
 
 UserSchema.statics.updateProfile = function(age,gender,state,suburb,token){
   const User = this;

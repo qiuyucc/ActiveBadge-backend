@@ -74,6 +74,18 @@ router.post("/avatar",(req,res)=>{
     });
 });
 
+router.post("/point",(req,res)=>{
+  var point = req.body.point;
+  var token = req.header("x-auth");
+  User.updatePoint(point,token).then((user)=>{ 
+    user.generateAuthToken().then((token)=>{
+   res.header({"x-auth":token}).send(user);
+});
+}).catch((error)=>{
+       res.status(401).send();
+   });
+});
+
 
 router.post("/profile",(req,res)=>{
   var age = req.body.age;
