@@ -30,5 +30,22 @@ const VegieRecordSchema = new Schema({
 })
 
 
+VegieRecordSchema.statics.findRecordByEmail= function(email){
+    const VegieRecord = this;
+    return VegieRecord.find({
+        "email":email
+    });
+}
+
+VegieRecordSchema.statics.findAll= function(){
+    const VegieRecord = this;
+    return VegieRecord.find({}, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+            console.log(result);
+        }
+      });
+};
 const VegieRecord = mongoose.model('VegieRecord', VegieRecordSchema);
 module.exports ={VegieRecord};

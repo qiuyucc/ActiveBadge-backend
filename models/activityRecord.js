@@ -32,6 +32,22 @@ const ActivityRecordSchema = new Schema({
     }
 })
 
+ActivityRecordSchema.statics.findRecordByEmail= function(email){
+    const ActivityRecord = this;
+    return ActivityRecord.find({
+        "email":email
+    });
+}
 
+ActivityRecordSchema.statics.findAll= function(){
+    const ActivityRecord = this;
+    return ActivityRecord.find({}, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+            console.log(result);
+        }
+      });
+};
 const ActivityRecord = mongoose.model('ActivityRecord', ActivityRecordSchema);
 module.exports ={ActivityRecord};

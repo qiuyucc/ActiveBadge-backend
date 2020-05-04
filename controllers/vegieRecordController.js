@@ -17,5 +17,15 @@ router.post("/post",(req,res)=>{
 }
 );
 
+router.get("/record", (req, res) => {
+    VegieRecord.findAll().then((result) => {
+        if (!result) {
+            return Promise.reject('Not found!');
+        } else {
+            res.json(result);
+        }
+})});
+
+
 
 module.exports = router;
