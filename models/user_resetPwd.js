@@ -44,6 +44,18 @@ User_resteSchema.statics.generateCode = function () {
   return code;
 }
 
+//find by email
+User_resteSchema.statics.findUserByEmail = function (email) {
+  const user_rest = this;
+  return user_rest.findOne({ email }).then((user) => {
+    if (!user) {
+      return Promise.reject('User not exist');
+    } else {
+      return Promise.resolve(user);
+    }
+  });
+}
+
 User_resteSchema.statics.findUserByCode = function (code) {
   const user_rest = this;
   return user_rest.findOne({ code }).then((user) => {
@@ -56,25 +68,17 @@ User_resteSchema.statics.findUserByCode = function (code) {
 }
 
 
-// //Test
-// User_resteSchema.methods.updateResetPwd = function () {
-//   const user = this;
-//   bcrypt.hash(user.code, 10, function (err, hash) {
-//     console.log('123: ' + user.code + ' 234 ' + hash);
-//     return user.updateOne({
-//       $set: {
-//         code: hash
-//       }
-//     }, function (error, success) {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         console.log(success);
-//       }
-//     }
-//     )
-//   });
-// }
+//Test
+User_resteSchema.methods.deleteCode = function () {
+  const user = this;
+  return user.delete({ email: user.email }, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+}
 
 const User_reset = mongoose.model('User_reset', User_resteSchema);
 module.exports = { User_reset };

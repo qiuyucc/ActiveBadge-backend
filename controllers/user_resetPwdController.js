@@ -10,7 +10,7 @@ const mailgun = require('../models/email-util');
 
 //search by email
 router.post("/user_rest", (req, res, next) => {
-  User.findUserByEmail(req.body.email).then((user) => { 
+  User.findUserByEmail(req.body.email).then((user) => {
     req.user = user;
     next();
   }).catch((error) => {
@@ -55,6 +55,16 @@ router.post("/verify_code", (req, res, next) => {
   res1.success(res, { code: req.user });
 });
 
+//delete code
+router.post("/delete_code", (req, res) => {
+  User_reset.deleteOne({ email: req.body.email }, function (err, result) {
+    if (err) {
+      res1.failure(res, { reason: err });
+    } else {
+      res1.success(res, { code: result });
+    }
+  });
+})
 //update pwd
 router.post("/updatePwd", (req, res, next) => {
   User.findUserByEmail(req.body.email)
@@ -71,7 +81,6 @@ router.post("/updatePwd", (req, res, next) => {
   req.user.updateResetPwd();
   res1.success(res, { code: req.user });
 });
-
 
 module.exports = router;
 
