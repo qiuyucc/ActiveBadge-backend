@@ -187,6 +187,38 @@ UserSchema.statics.updateProfile = function(age,gender,state,suburb,token){
   })
 }
 
+//find by email
+UserSchema.statics.findUserByEmail = function (email) {
+  const User = this;
+  return User.findOne({ email }).then((user) => {
+    if (!user) {
+      return Promise.reject('User not exist');
+    } else {
+      return Promise.resolve(user);
+    }
+  });
+}
+
+//PWD
+UserSchema.methods.updateResetPwd = function () {
+  const user = this;
+  bcrypt.hash(user.password, 10, function (err, hash) {
+    console.log('123: ' + user.password + ' 234 ' + hash);
+    return user.updateOne({
+      $set: {
+        password: hash
+      }
+    }, function (error, success) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(success);
+      }
+    })
+  });
+}
+
+
 const User = mongoose.model('User', UserSchema);
 
 module.exports = { User };
