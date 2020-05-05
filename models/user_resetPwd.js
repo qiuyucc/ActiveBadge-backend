@@ -56,25 +56,25 @@ User_resteSchema.statics.findUserByCode = function (code) {
 }
 
 
-//Test
-User_resteSchema.methods.updateResetPwd = function () {
-  const user = this;
-  bcrypt.hash(user.code, 10, function (err, hash) {
-    console.log('123: ' + user.code + ' 234 ' + hash);
-    return user.updateOne({
-      $set: {
-        code: hash
-      }
-    }, function (error, success) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log(success);
-      }
-    }
-    )
-  });
-}
+// //Test
+// User_resteSchema.methods.updateResetPwd = function () {
+//   const user = this;
+//   bcrypt.hash(user.code, 10, function (err, hash) {
+//     console.log('123: ' + user.code + ' 234 ' + hash);
+//     return user.updateOne({
+//       $set: {
+//         code: hash
+//       }
+//     }, function (error, success) {
+//       if (error) {
+//         console.log(error);
+//       } else {
+//         console.log(success);
+//       }
+//     }
+//     )
+//   });
+// }
 
 const User_reset = mongoose.model('User_reset', User_resteSchema);
 module.exports = { User_reset };
