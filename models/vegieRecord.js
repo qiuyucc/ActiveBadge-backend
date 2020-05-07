@@ -47,5 +47,42 @@ VegieRecordSchema.statics.findAll= function(){
         }
       });
 };
+
+VegieRecordSchema.statics.findRank= function(){
+    const VegieRecord = this;
+    return VegieRecord.aggregate([
+            {
+            $group:{
+                _id: null,
+                count:{$sum:1},
+                data:{$push:"$$ROOT"}
+                //percent:{$multiply:[{$divide:["$count",{nums}]},100]}
+                }
+            },
+            {
+                $unwind:"$data"
+            },
+            {
+            $group:{
+                _id: '$data.description',
+                name:{$first: '$data.name'},
+                totalNum:{$sum:'$data.count'},
+                count:{$sum:1},
+                total:{$first:"$count"},
+                }
+            },
+             {
+                $project: {
+                description:"$_id",
+                url:{$concat:["https://activebadge.s3-ap-southeast-2.amazonaws.com/","$name"]},
+               // totalNum:"$totalNum",
+               // count:"$count",
+                //total:"$total",
+                percent: { $trunc:[{$multiply:[{$divide:["$count","$total"]},100]},2]}
+              }
+            },{
+                $sort:{"percent":-1 }
+            }
+     ] )};
 const VegieRecord = mongoose.model('VegieRecord', VegieRecordSchema);
 module.exports ={VegieRecord};

@@ -26,6 +26,15 @@ router.get("/record", (req, res) => {
         }
 })});
 
+router.get("/rank", (req, res) => {
+    VegieRecord.findRank().then((result) => {
+        if (!result) {
+            return Promise.reject('Not found!');
+        } else {
+            res.json(result);
+        }
+})});
+
 
 
 module.exports = router;
