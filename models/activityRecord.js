@@ -27,6 +27,11 @@ const ActivityRecordSchema = new Schema({
         required:true,
         trim:true
     },
+    dateFormat:{
+        type:Date,
+        required:true,
+        trim:true
+    },
     count:{
         type:Number,
         required:true,
@@ -49,6 +54,75 @@ ActivityRecordSchema.statics.findAll= function(){
             console.log(result);
         }
       });
+};
+
+ActivityRecordSchema.statics.recordByActivity=function(email,start,end){
+    const ActivityRecord = this;
+    var days = (end -start)/(1000 * 3600 * 24);
+     return ActivityRecord.aggregate([
+         {
+             $addFields:{
+                 "days":days
+             }
+         },
+         {
+             $match:{
+                "email":email,
+                "dateFormat":{
+                    $gte:start,
+                    $lte:end
+                }
+             }
+         },
+        {
+            $group:{
+                _id:null,
+                totalmins: {$sum:"$mins"},
+                data:{$push:"$$ROOT"}
+            }
+        },
+        {
+            $unwind:"$data"
+        },
+        {
+            $group:{
+                _id: '$data.description',
+                totalbyActivity:{$sum:'$data.mins'},
+                totalTime:{$first:"$totalmins"},
+                days:{$first:"$data.days"}
+            }
+        },{
+            $project:{
+                description:"$_id",
+                totalbyActivity:"$totalbyActivity",
+                totalTime:"$totalTime",
+                percent: { $trunc:[{$multiply:[{$divide:["$totalbyActivity","$totalTime"]},100]},2]},
+                averageTime: { $trunc:[{$divide:["$totalTime","$days"]},2]}
+            }
+        }
+    ])
+};
+
+ActivityRecordSchema.statics.recordByDate= function(email,start,end){
+    const ActivityRecord = this;
+    return ActivityRecord.aggregate([
+        {
+            $match:{
+               "email":email,
+               "dateFormat":{
+                   $gte:start,
+                   $lte:end
+               }
+            }
+        },
+        {
+            $group:{
+               _id: '$date', 
+               mins:{$sum:'$mins'},
+               count:{$sum:1}
+            }
+        }
+   ])
 };
 
 
@@ -84,7 +158,8 @@ ActivityRecordSchema.statics.findRank= function(){
             },{
                 $sort:{"percent":-1 }
             }
-     ] )};
+     ] )
+    };
 
 const ActivityRecord = mongoose.model('ActivityRecord', ActivityRecordSchema);
 module.exports ={ActivityRecord};

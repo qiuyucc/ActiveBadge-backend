@@ -23,6 +23,11 @@ const VegieRecordSchema = new Schema({
         required:true,
         trim:true
     },
+    dateFormat:{
+        type:Date,
+        required:true,
+        trim:true
+    },
     count:{
         type:Number,
         required:true
@@ -46,6 +51,75 @@ VegieRecordSchema.statics.findAll= function(){
             console.log(result);
         }
       });
+};
+
+VegieRecordSchema.statics.recordByVegie=function(email,start,end){
+    const VegieRecord = this;
+    var days = (end -start)/(1000 * 3600 * 24);
+     return VegieRecord.aggregate([
+         {
+             $addFields:{
+                 "days":days
+             }
+         },
+         {
+             $match:{
+                "email":email,
+                "dateFormat":{
+                    $gte:start,
+                    $lte:end
+                }
+             }
+         },
+        {
+            $group:{
+                _id:null,
+                totalNum: {$sum:"$count"},
+                data:{$push:"$$ROOT"}
+            }
+        },
+        {
+            $unwind:"$data"
+        },
+        {
+            $group:{
+                _id: '$data.description',
+                totalbyVegie:{$sum:'$data.count'},
+                totalNum:{$first:"$totalNum"},
+                days:{$first:"$data.days"}
+            }
+        },{
+            $project:{
+                description:"$_id",
+                totalbyVegie:"$totalbyVegie",
+                totalNum:"$totalNum",
+                percent: { $trunc:[{$multiply:[{$divide:["$totalbyVegie","$totalNum"]},100]},2]},
+                averageTime: { $trunc:[{$divide:["$totalNum","$days"]},2]}
+            }
+        }
+    ])
+};
+
+VegieRecordSchema.statics.recordByDate= function(email,start,end){
+    const VegieRecord = this;
+    return VegieRecord.aggregate([
+        {
+            $match:{
+               "email":email,
+               "dateFormat":{
+                   $gte:start,
+                   $lte:end
+               }
+            }
+        },
+        {
+            $group:{
+               _id: '$date', 
+               totalnum:{$sum:'$count'},
+               times:{$sum:1}
+            }
+        }
+   ])
 };
 
 VegieRecordSchema.statics.findRank= function(){
@@ -84,5 +158,8 @@ VegieRecordSchema.statics.findRank= function(){
                 $sort:{"percent":-1 }
             }
      ] )};
+
+
+
 const VegieRecord = mongoose.model('VegieRecord', VegieRecordSchema);
 module.exports ={VegieRecord};

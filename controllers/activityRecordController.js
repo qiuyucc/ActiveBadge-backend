@@ -10,6 +10,7 @@ router.post("/post",(req,res)=>{
         description:req.body.description,
         mins: req.body.mins,
         date:req.body.date,
+        dateFormat:req.body.date,
         count:1
     }
     const newRecord = new ActivityRecord(record);
@@ -36,5 +37,30 @@ router.get("/rank", (req, res) => {
         }
 })});
 
+router.get("/reportbyactivity/:email/:start/:end",(req,res)=>{
+    var email = req.params.email;
+    var start = new Date(req.params.start);
+    var end = new Date(req.params.end);
+    ActivityRecord.recordByActivity(email,start,end).then((result)=>{
+        if(!result){
+            return Promise.reject('Not found!');
+        }else{
+            res.json(result);
+        }
+    })
+})
+
+router.get("/reportbydate/:email/:start/:end",(req,res)=>{
+    var email = req.params.email;
+    var start = new Date(req.params.start);
+    var end = new Date(req.params.end);
+    ActivityRecord.recordByDate(email,start,end).then((result)=>{
+        if(!result){
+            return Promise.reject('Not found!');
+        }else{
+            res.json(result);
+        }
+    })
+})
 
 module.exports = router;

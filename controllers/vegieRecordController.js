@@ -9,6 +9,7 @@ router.post("/post",(req,res)=>{
         name:req.body.name,
         description:req.body.description,
         date:req.body.date,
+        dateFormat:req.body.date,
         count:req.body.count
     }
     const newRecord = new VegieRecord(record);
@@ -35,6 +36,30 @@ router.get("/rank", (req, res) => {
         }
 })});
 
+router.get("/reportbyvegie/:email/:start/:end",(req,res)=>{
+    var email = req.params.email;
+    var start = new Date(req.params.start);
+    var end = new Date(req.params.end);
+    VegieRecord.recordByVegie(email,start,end).then((result)=>{
+        if(!result){
+            return Promise.reject('Not found!');
+        }else{
+            res.json(result);
+        }
+    })
+})
 
+router.get("/reportbydate/:email/:start/:end",(req,res)=>{
+    var email = req.params.email;
+    var start = new Date(req.params.start);
+    var end = new Date(req.params.end);
+    VegieRecord.recordByDate(email,start,end).then((result)=>{
+        if(!result){
+            return Promise.reject('Not found!');
+        }else{
+            res.json(result);
+        }
+    })
+})
 
 module.exports = router;
