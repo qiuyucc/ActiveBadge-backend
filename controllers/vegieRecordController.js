@@ -10,6 +10,7 @@ router.post("/post",(req,res)=>{
         description:req.body.description,
         date:req.body.date,
         dateFormat:req.body.date,
+        color:"#"+((1<<24)*Math.random()|0).toString(16),
         count:req.body.count
     }
     const newRecord = new VegieRecord(record);

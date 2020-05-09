@@ -11,6 +11,7 @@ router.post("/post",(req,res)=>{
         mins: req.body.mins,
         date:req.body.date,
         dateFormat:req.body.date,
+        color:"#"+((1<<24)*Math.random()|0).toString(16),
         count:1
     }
     const newRecord = new ActivityRecord(record);

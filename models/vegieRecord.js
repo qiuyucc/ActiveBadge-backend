@@ -31,6 +31,9 @@ const VegieRecordSchema = new Schema({
     count:{
         type:Number,
         required:true
+    },color:{
+        type:String,
+        required:true,
     }
 })
 
@@ -60,6 +63,7 @@ VegieRecordSchema.statics.recordByVegie=function(email,start,end){
          {
              $addFields:{
                  "days":days
+
              }
          },
          {
@@ -86,15 +90,17 @@ VegieRecordSchema.statics.recordByVegie=function(email,start,end){
                 _id: '$data.description',
                 totalbyVegie:{$sum:'$data.count'},
                 totalNum:{$first:"$totalNum"},
-                days:{$first:"$data.days"}
+                days:{$first:"$data.days"},
+                color:{$first:"$data.color"}
             }
         },{
             $project:{
-                description:"$_id",
+                name:"$_id",
                 totalbyVegie:"$totalbyVegie",
                 totalNum:"$totalNum",
                 percent: { $trunc:[{$multiply:[{$divide:["$totalbyVegie","$totalNum"]},100]},2]},
-                averageTime: { $trunc:[{$divide:["$totalNum","$days"]},2]}
+                averageTime: { $trunc:[{$divide:["$totalNum","$days"]},2]},
+                color:'$color'
             }
         }
     ])
@@ -115,9 +121,13 @@ VegieRecordSchema.statics.recordByDate= function(email,start,end){
         {
             $group:{
                _id: '$date', 
+               date:{$first:'$date'},
                totalnum:{$sum:'$count'},
-               times:{$sum:1}
+               count:{$sum:1}
             }
+        },
+        {
+            $sort:{"date":1 }
         }
    ])
 };

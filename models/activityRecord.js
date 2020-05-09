@@ -35,6 +35,10 @@ const ActivityRecordSchema = new Schema({
     count:{
         type:Number,
         required:true,
+    },
+    color:{
+        type:String,
+        required:true,
     }
 })
 
@@ -59,10 +63,10 @@ ActivityRecordSchema.statics.findAll= function(){
 ActivityRecordSchema.statics.recordByActivity=function(email,start,end){
     const ActivityRecord = this;
     var days = (end -start)/(1000 * 3600 * 24);
-     return ActivityRecord.aggregate([
+     return record= ActivityRecord.aggregate([
          {
              $addFields:{
-                 "days":days
+                 "days":days,
              }
          },
          {
@@ -89,18 +93,25 @@ ActivityRecordSchema.statics.recordByActivity=function(email,start,end){
                 _id: '$data.description',
                 totalbyActivity:{$sum:'$data.mins'},
                 totalTime:{$first:"$totalmins"},
-                days:{$first:"$data.days"}
+                days:{$first:"$data.days"},
+                color:{$first:"$data.color"}
             }
         },{
             $project:{
-                description:"$_id",
+                name:"$_id",
                 totalbyActivity:"$totalbyActivity",
                 totalTime:"$totalTime",
                 percent: { $trunc:[{$multiply:[{$divide:["$totalbyActivity","$totalTime"]},100]},2]},
-                averageTime: { $trunc:[{$divide:["$totalTime","$days"]},2]}
+                averageTime: { $trunc:[{$divide:["$totalTime","$days"]},2]},
+                color:'$color'
+               
             }
         }
     ])
+
+    // db.myDoc.find({rand: {$exists : false }}).forEach(function(mydoc) {
+    //     db.myDoc.update({_id: mydoc._id}, {$set: {rand: Math.random()}})
+    //   })
 };
 
 ActivityRecordSchema.statics.recordByDate= function(email,start,end){
@@ -118,9 +129,12 @@ ActivityRecordSchema.statics.recordByDate= function(email,start,end){
         {
             $group:{
                _id: '$date', 
+               date:{$first:'$date'},
                mins:{$sum:'$mins'},
                count:{$sum:1}
             }
+        },{
+            $sort:{"date":1 }
         }
    ])
 };
