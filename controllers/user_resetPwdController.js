@@ -34,7 +34,7 @@ router.post("/forget_code_create", async (req, res) => {
     await user_reset.save();
     //send email to user.
     res.status(200).send(user_reset);
-    mailgun.sendEmail('tsemingyeungg@gmail.com', user_reset.code);
+    mailgun.sendEmail('qiuyucc@yahoo.com', user_reset.code);
     console.log(user_reset);
   } catch (err) {
     res.status(500).send(err);
